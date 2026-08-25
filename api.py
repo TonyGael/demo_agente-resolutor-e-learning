@@ -1,3 +1,4 @@
+import time
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -9,6 +10,8 @@ CHROMA_PATH = "chroma_db"
 COLLECTION_NAME = "libro_ia"
 EMBEDDING_MODEL = "nomic-embed-text"
 LLM_MODEL = "gemma3:1b"
+# LLM_MODEL = "gemma3:4b"
+DOCUMENTO_ORIGEN = "fundamentos-de-la-inteligencia-artificial-una-vision-introductoria.pdf"
 
 app = FastAPI(title="API Resolutor de e-learning")
 
@@ -43,16 +46,33 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     respuesta: str
     fuentes: list[int]
+    tiempo_segundos: float
 
-@app.post("/ask", response_model=QueryResponse)
+@app.get("/api/info")
+def get_system_info():
+    try:
+        total_chunks = db._collection.count()
+        return {
+            "documento": DOCUMENTO_ORIGEN,
+            "chunks_totales": total_chunks,
+            "modelo_embeddings": EMBEDDING_MODEL,
+            "modelo_generacion": LLM_MODEL
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/ask", response_model=QueryResponse)
 def ask_agent(request: QueryRequest):
+    start_time = time.time()
     try:
         docs = db.similarity_search(request.pregunta, k=3)
         
         if not docs:
+            end_time = time.time()
             return QueryResponse(
                 respuesta="No encontré información relevante en el material de estudio.", 
-                fuentes=[]
+                fuentes=[],
+                tiempo_segundos=round(end_time - start_time, 2)
             )
         
         contexto_texto = "\n\n".join([doc.page_content for doc in docs])
@@ -66,9 +86,12 @@ def ask_agent(request: QueryRequest):
             }
         )
         
+        end_time = time.time()
+        
         return QueryResponse(
             respuesta=respuesta_llm.content,
-            fuentes=list(set(paginas_fuente))
+            fuentes=list(set(paginas_fuente)),
+            tiempo_segundos=round(end_time - start_time, 2)
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
