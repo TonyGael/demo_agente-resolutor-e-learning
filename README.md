@@ -18,6 +18,7 @@ El proyecto resuelve la necesidad de integrar pipelines de inteligencia artifici
 ## Stack tecnológico
 - **Ollama:** Motor de inferencia local para servir los modelos generativos (`gemma3:1b` y `gemma3:4b`) y el modelo de embeddings (`nomic-embed-text`).
 - **LangChain:** Framework de orquestación para manejar el flujo RAG, el chunking de documentos y la conexión estructurada con la base vectorial.
+- **LangGraph:** Motor de orquestación de estados para definir el flujo de decisión del agente y el enrutamiento lógico.
 - **ChromaDB:** Base de datos vectorial persistente para el almacenamiento y la búsqueda semántica local.
 - **FastAPI:** Framework backend de alto rendimiento para exponer los endpoints de consulta y telemetría.
 - **Streamlit:** Frontend rápido para construir la interfaz conversacional y visualizar las métricas del sistema en tiempo real.
@@ -37,11 +38,11 @@ demo_agente-resolutor-e-learning/
 ## Instalación
 Clonar el repositorio y preparar el entorno de Python:
 ```bash
-git clone https://github.com/TonyGael/demo_agente-resolutor-e-learning
+git clone [https://github.com/TonyGael/demo_agente-resolutor-e-learning](https://github.com/TonyGael/demo_agente-resolutor-e-learning)
 cd demo_agente-resolutor-e-learning
 python3 -m venv venv
 source venv/bin/activate
-pip install fastapi uvicorn pydantic langchain-community langchain-text-splitters langchain-ollama langchain-chroma pypdf streamlit requests
+pip install fastapi uvicorn pydantic langchain-community langchain-text-splitters langchain-ollama langchain-chroma pypdf streamlit requests langgraph
 ```
 
 Descargar los modelos necesarios en Ollama:
@@ -75,11 +76,11 @@ La interfaz gráfica queda disponible en `http://localhost:8501`.
 - [x] Backend RESTful con FastAPI y medición de latencia
 - [x] Interfaz gráfica en Streamlit con telemetría del sistema y chat integrado
 - [x] Orquestación de múltiples servicios (API y Web) desde un único script de ejecución
+- [x] Integración de un grafo de enrutamiento con LangGraph para dotar al agente de capacidad de decisión
+- [x] Inclusión de comentarios detallados inline en los diferentes bloques de código con type hints estrictos
 
 ## TODO
 - [ ] Implementar streaming de respuestas en la API y el frontend para mejorar el Time To First Token (TTFT)
-- [ ] Integrar un grafo de enrutamiento con LangGraph para dotar al agente de capacidad de decisión
 - [ ] Añadir persistencia de memoria para mantener el contexto multi-turno de la conversación
 - [ ] Optimizar el tamaño de los chunks y probar estrategias de chunking semántico
-- [ ] Incluir comentarios detallados inline en los diferentes bloques de código con type hints estrictos
 - [ ] [COMPLETAR: Cualquier otro requerimiento que surja durante el desarrollo]
